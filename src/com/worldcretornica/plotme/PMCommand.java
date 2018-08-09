@@ -1,7 +1,6 @@
 package com.worldcretornica.plotme;
 
 import com.kodingkingdom.craftercoordinator.CrafterRegion;
-import com.kodingkingdom.craftercoordinator.CrafterSchool;
 import com.worldcretornica.plotme.utils.MinecraftFontWidthCalculator;
 
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -188,9 +187,6 @@ public class PMCommand implements CommandExecutor {
 						}
 						if (a0.startsWith(C("CommandHome")) || a0.startsWith("h")) {
 							return home(p, args);
-						}
-						if (a0.equalsIgnoreCase("school")) {
-							return school(p, args);
 						}
 						if (a0.equalsIgnoreCase(C("CommandResetExpired"))) {
 							return resetexpired(p, args);
@@ -2143,53 +2139,6 @@ public class PMCommand implements CommandExecutor {
 		}
 		return true;
 	}
-
-	private boolean school(Player p, String[] args) {
-		if (args.length==1 && PlotMe.cPerms(p, "PlotMe.use.school")) {
-			if (PlotManager.isPlotWorld(p)) {
-				World w = p.getWorld();				
-				PlotMapInfo pmi = PlotManager.getMap(w);
-
-				for (CrafterSchool school : PlotManager.getCoordinator().getSchools().values()){
-					if (school.getName().equals("YouthCreativeSpace"))continue;
-					if (school.getPlayers().contains(p.getUniqueId())){
-						for (CrafterRegion region : PlotManager.getCoordinator().getSchoolRegion(school.getName()).values()){
-							try{
-								Plot plot = PlotManager.getPlotById(new Location(region.getWorld(),region.getMinX(),region.getMinY(),region.getMinZ()));
-								p.teleport(new Location(w, PlotManager.bottomX(plot.id, w) + (PlotManager.topX(plot.id, w) - PlotManager.bottomX(plot.id, w))/2, pmi.RoadHeight + 2, PlotManager.bottomZ(plot.id, w) - 2));}
-							catch(Exception e){
-								Send(p, RED + "Invalid school state!");}
-							return true;}
-						Send(p, RED + "No school plot found!");
-						return true;}}		
-				Send(p, RED + "No school found!");
-				return true;}
-			else {
-			Send(p, RED + C("MsgNotPlotWorld"));
-			return true;}}
-		else if (args.length==2 && p.isOp()) {
-				if (PlotManager.isPlotWorld(p)) {
-					World w = p.getWorld();				
-					PlotMapInfo pmi = PlotManager.getMap(w);
-
-					if (PlotManager.getCoordinator().getSchools().containsKey(args[1])){
-						for (CrafterRegion region : PlotManager.getCoordinator().getSchoolRegion(PlotManager.getCoordinator().getSchool(args[1]).getName()).values()){
-							try{
-								Plot plot = PlotManager.getPlotById(new Location(region.getWorld(),region.getMinX(),region.getMinY(),region.getMinZ()));
-								p.teleport(new Location(w, PlotManager.bottomX(plot.id, w) + (PlotManager.topX(plot.id, w) - PlotManager.bottomX(plot.id, w))/2, pmi.RoadHeight + 2, PlotManager.bottomZ(plot.id, w) - 2));}
-							catch(Exception e){
-								Send(p, RED + "Invalid school state!");}
-							return true;}
-						Send(p, RED + "No school plot found!");
-						return true;}
-					Send(p, RED + "No school found!");
-					return true;}
-				else {
-				Send(p, RED + C("MsgNotPlotWorld"));
-				return true;}}
-		else {
-			Send(p, RED + C("MsgPermissionDenied"));
-			return true;}}
 	
 	private boolean info(Player p, String[] args) {
 		if (PlotMe.cPerms(p, "PlotMe.use.info")) {

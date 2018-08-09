@@ -27,8 +27,8 @@ import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.kodingkingdom.craftercoordinator.CrafterCoordinator;
 import com.kodingkingdom.craftercoordinator.CrafterCoordinatorPlugin;
+import com.kodingkingdom.craftercoordinator.CrafterPlayer;
 import com.kodingkingdom.craftercoordinator.CrafterRegion;
-import com.kodingkingdom.craftercoordinator.CrafterSchool;
 
 public class PlotManager
 {			
@@ -54,13 +54,9 @@ public class PlotManager
 			int mod2 = 0;
 			int mod1 = 1;
 			
-			String regionId=null;
-			CrafterRegion region=null;
-			for (CrafterSchool school : getCoordinator().getSchools().values()){
-				for (Map.Entry<String,CrafterRegion> regionEntry : getCoordinator().getSchoolRegion(school.getName()).entrySet()){
-					if (regionEntry.getValue().isIn(loc)){region=regionEntry.getValue();regionId=regionEntry.getKey();break;}}}
-			
-			if (region!=null) return regionId;
+			for (CrafterPlayer p : getCoordinator().getPlayers().values()){
+				for (CrafterRegion r : getCoordinator().getPlayerRegion(p .getId()).values()){
+					if (r.isIn(loc)){return r .getMinX() + "," + r .getMinZ();}}}
 			
 			int x = (int) Math.ceil((double)valx / size);
 			int z = (int) Math.ceil((double)valz / size);
@@ -570,15 +566,13 @@ public class PlotManager
 		int x = px * (pmi.PlotSize + pmi.PathWidth) - (pmi.PlotSize) - ((int)Math.floor(pmi.PathWidth/2));
 		int z = pz * (pmi.PlotSize + pmi.PathWidth) - (pmi.PlotSize) - ((int)Math.floor(pmi.PathWidth/2));
 		
-
 		Location loc=new Location(world, x, getCoordinator().getHeightMinLimit(), z);
-		CrafterRegion region=null;
-		for (CrafterSchool school : getCoordinator().getSchools().values()){
-			for (CrafterRegion r : getCoordinator().getSchoolRegion(school.getName()).values()){
-				if (r.isIn(loc)){region=r;break;}}}
+		for (CrafterPlayer p : getCoordinator().getPlayers().values()){
+			for (CrafterRegion r : getCoordinator().getPlayerRegion(p .getId()).values()){
+				if (r.isIn(loc)){
+					return new Location(world, r.getMinX(), 1, r.getMinZ());}}}
 		
-		if (region==null) return new Location(world, x, 1, z);
-		else return new Location(world, region.getMinX(), 1, region.getMinZ());}
+		return new Location (world, x, 1, z);}
 	
 	public static Location getPlotTopLoc(World world, String id)
 	{
@@ -591,13 +585,11 @@ public class PlotManager
 		int z = pz * (pmi.PlotSize + pmi.PathWidth) - ((int)Math.floor(pmi.PathWidth/2)) - 1;
 		
 		Location loc=new Location(world, x, getCoordinator().getHeightMaxLimit(), z);
-		CrafterRegion region=null;
-		for (CrafterSchool school : getCoordinator().getSchools().values()){
-			for (CrafterRegion r : getCoordinator().getSchoolRegion(school.getName()).values()){
-				if (r.isIn(loc)){region=r;break;}}}
+		for (CrafterPlayer p : getCoordinator().getPlayers().values()){
+			for (CrafterRegion r : getCoordinator().getPlayerRegion(p .getId()).values()){
+				if (r.isIn(loc)){return new Location(world, r.getMaxX(), 255, r.getMaxZ());}}}
 		
-		if (region==null) return new Location(world, x, 255, z);
-		else return new Location(world, region.getMaxX(), 255, region.getMaxZ());}
+		return new Location (world, x, 255, z);}
 	
 	public static void setBiome(World w, String id, Plot plot, Biome b)
 	{
